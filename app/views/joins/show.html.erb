@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @join.user_id %>
+</p>
+
+<p>
+  <strong>Society:</strong>
+  <%= @join.society_id %>
+</p>
+
+<p>
+  <strong>Event:</strong>
+  <%= @join.event_id %>
+</p>
+
+<%= link_to 'Edit', edit_join_path(@join) %> |
+<%= link_to 'Back', joins_path %>

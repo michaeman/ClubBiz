@@ -1,0 +1,177 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<%= link_to 'Register a Society', new_society_path, :class => "btn btn-default pull-right", :style => "margin-top: 10px;" %>
+		<%= page_heading "My Societies" %>
+	</div>
+	<div class="panel-body">
+		<p>Welcome to the Societies page! This page lists all societies 
+		that have been added to Club-Biz. Below is a list of societies you've joined,
+		and below that is a list of all societies. In the All Societies box, you can also use the search 
+		box below to filter through the list.</p>
+	</div>
+	<table class="table" id="societies">
+		<thead>
+			<tr>
+				<th style="min-width: 100px; width: 100px;"></th>
+				<th style="width: 200px;">Title</th>
+				<th>Description</th>
+				<th style="width: 1px; text-align: right;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			<% @societies.each do |society| %>
+			
+			<% @join = Join.where(:user_id => current_user.id ,:society_id => society.id).first%>
+			
+			<% if @join.blank?%>
+			<% else %>
+			<% @isSocieties = 1 %>
+				<tr>
+					<td><% if(society.avatar.url != "/images/original/missing.png") %><%= link_to (link_to (image_tag society.avatar.url(:thumb)), society) %><% else %><div style="width: 100px;">&nbsp;</div><% end %></td>
+					<td><span style="white-space: nowrap;"><%= link_to (link_to (society.name), society) %></span></td>
+					<td><%= society.description %></td>
+					<td style="text-align: right;"><span style="white-space: nowrap;">
+							<%@admin = Admin.where(:user_id => current_user.id, :society_id => society.id).first%>
+
+						<% if !@admin.blank?%>
+							
+							<% @join = Join.where(:user_id => current_user.id ,:society_id => society.id).first%>
+							<% if @join.blank?%>
+  								<%=link_to("Join", {action: "joining", :society_id => society.id}, class: "btn btn-primary") %>
+ 			 					
+							<% else %>
+ 	 							<%=link_to("Resign", {action: "unjoin", :id => @join.id}, class: "btn btn-danger") %>
+								
+							<% end %>
+							
+							<% @follow = Follow.where(:user_id => current_user.id ,:society_id => society.id).first%>
+                            <% if @follow.blank?%>
+                            	<%= link_to("Follow", {action: "following", :society_id => society.id}, :class => "btn btn-primary") %>
+ 						    	
+					    	<% else %>
+ 				            	<%= link_to("Unfollow", {action: "unfollow", :id => @follow.id}, :class => "btn btn-danger") %>
+                            	
+                        	<% end %>
+
+							
+							<%= link_to 'Edit', edit_society_path(society), class: "btn btn-primary" %> 
+							<%= link_to 'Delete', society, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+							<iframe src="//www.facebook.com/plugins/like.php?href=https://developers.facebook.com/docs/plugins/&amp;width&amp;layout=button&amp;action=like&amp;show_faces=true&amp;share=true&amp;height=80&amp;appId=195847633826176" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height: 27px; padding-top: 7px; width: 100px; display:inline-block;" allowTransparency="true"></iframe>
+						<% else %>
+
+							<% @join = Join.where(:user_id => current_user.id ,:society_id => society.id).first%>
+							<% if @join.blank?%>
+ 						 		<%=link_to("Join", {action: "joining", :society_id => society.id}, class: "btn btn-primary") %>
+						  		
+							<% else %>
+  								<%=link_to("Resign", {action: "unjoin", :id => @join.id}, class: "btn btn-danger") %>
+								
+
+							<% @follow = Follow.where(:user_id => current_user.id ,:society_id => society.id).first%>
+                            <% if @follow.blank?%>
+                          		<%= link_to("Follow", {action: "following", :society_id => society.id}, :class => "btn btn-primary") %>
+ 							 	
+							<% else %>
+  								<%= link_to("Unfollow", {action: "unfollow", :id => @follow.id}, :class => "btn btn-danger") %>
+								
+							<% end %>
+								<iframe src="//www.facebook.com/plugins/like.php?href=https://developers.facebook.com/docs/plugins/&amp;width&amp;layout=button&amp;action=like&amp;show_faces=true&amp;share=true&amp;height=80&amp;appId=195847633826176" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height: 27px; padding-top: 7px; width: 100px; display:inline-block;" allowTransparency="true"></iframe>
+							<% end %>
+						<% end %>
+					</span></td>
+				</tr>
+				<%end%>
+				
+			<% end %>
+			<% if(@isSocieties != 1) %>
+			<tr>
+			<td><div style="width: 100px;">&nbsp;</div></td>
+			<td></td>
+			<td><em>You haven't joined any societies yet. :(</em></td>
+			<td></td>
+			</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>
+
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2>All Societies</h2>
+	</div>
+	<div class="panel-body">
+		<input type="text" class="form-control" id="search" placeholder="Type to search/filter">
+	</div>
+	<table class="table" id="societies">
+		<thead>
+			<tr>
+				<th style="min-width: 100px; width: 100px;"></th>
+				<th style="width: 200px;">Title</th>
+				<th>Description</th>
+				<th style="width: 1px; text-align: right;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @societies.each do |society| %>
+				<tr>
+					<td><% if(society.avatar.url != "/images/original/missing.png") %><%= link_to (link_to (image_tag society.avatar.url(:thumb)), society) %><% else %><div style="width: 100px;">&nbsp;</div><% end %></td>
+					<td><span style="white-space: nowrap;"><%= link_to (link_to (society.name), society) %></span></td>
+					<td><%= society.description %></td>
+					<td style="text-align: right;"><span style="white-space: nowrap;">
+						<%@admin = Admin.where(:user_id => current_user.id, :society_id => society.id).first%>
+						<% if society.user_id == current_user.id || !@admin.blank?%>
+
+							<% @join = Join.where(:user_id => current_user.id ,:society_id => society.id).first%>
+							<% if @join.blank?%>
+  								<%=link_to("Join", {action: "joining", :society_id => society.id}, class: "btn btn-primary") %>
+							<% else %>
+ 	 							<%=link_to("Resign", {action: "unjoin", :id => @join.id}, class: "btn btn-danger") %>
+							<% end %>
+							<% @follow = Follow.where(:user_id => current_user.id ,:society_id => society.id).first%>
+                            <% if @follow.blank?%>
+                            	<%= link_to("Follow", {action: "following", :society_id => society.id}, :class => "btn btn-primary") %>
+					    	<% else %>
+ 				            	<%= link_to("Unfollow", {action: "unfollow", :id => @follow.id}, :class => "btn btn-danger") %>
+                        	<% end %>
+								<%= link_to 'Edit', edit_society_path(society), class: "btn btn-primary" %> 
+								<%= link_to 'Delete', society, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+								<iframe src="//www.facebook.com/plugins/like.php?href=https://developers.facebook.com/docs/plugins/&amp;width&amp;layout=button&amp;action=like&amp;show_faces=true&amp;share=true&amp;height=80&amp;appId=195847633826176" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height: 27px; padding-top: 7px; width: 100px; display:inline-block;" allowTransparency="true"></iframe>
+						<% else %>
+							<% @join = Join.where(:user_id => current_user.id ,:society_id => society.id).first%>
+							<% if @join.blank?%>
+  								<%=link_to("Join", {action: "joining", :society_id => society.id}, class: "btn btn-primary") %>
+ 			 				<% else %>
+ 	 							<%=link_to("Resign", {action: "unjoin", :id => @join.id}, class: "btn btn-danger") %>
+							<% end %>
+							<% @follow = Follow.where(:user_id => current_user.id ,:society_id => society.id).first%>
+                            <% if @follow.blank?%>
+                            	<%= link_to("Follow", {action: "following", :society_id => society.id}, :class => "btn btn-primary") %>
+					    	<% else %>
+ 				            	<%= link_to("Unfollow", {action: "unfollow", :id => @follow.id}, :class => "btn btn-danger") %>
+                        	<% end %>
+
+							<iframe src="//www.facebook.com/plugins/like.php?href=https://developers.facebook.com/docs/plugins/&amp;width&amp;layout=button&amp;action=like&amp;show_faces=true&amp;share=true&amp;height=80&amp;appId=195847633826176" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height: 27px; padding-top: 7px; width: 100px; display:inline-block;" allowTransparency="true"></iframe>
+
+						<% end %>
+					</span></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var $rows = $('#societies tbody tr');
+    $('#search').keyup(function() {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        $rows.show().filter(function() {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(val);
+        }).hide();
+    });
+});
+</script>

@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Society:</strong>
+  <%= @societyevent.society_id %>
+</p>
+
+<p>
+  <strong>Event:</strong>
+  <%= @societyevent.event_id %>
+</p>
+
+<%= link_to 'Edit', edit_societyevent_path(@societyevent) %> |
+<%= link_to 'Back', societyevents_path %>

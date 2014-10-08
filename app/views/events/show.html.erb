@@ -1,0 +1,114 @@
+<div class="pull-right">
+
+<%@admin = Admin.where(:user_id => current_user.id, :society_id => @event.society_id).first%>
+            <%@adcheck = Admin.where(:user_id => current_user.id)%>
+            <%@adcheck.each do|adch|%> 
+            <%@adminevent = Adminevent.where(:admin_id => adch.id, :event_id => @event.id).first%>
+            <%end%>
+            <% if !@admin.blank? || !@adminevent.blank?%>
+<%= link_to 'Edit', edit_event_path(@event), class: "btn btn-danger" %>
+<% end %>
+
+<% @join = Join.where(:user_id => current_user.id ,:event_id => @event.id).first%>
+<% if @join.blank?%>
+  <%=link_to("Join", {action: "joining", :event_id => @event.id}, class: "btn btn-primary") %>
+<% else %>
+  <%=link_to("Resign", {action: "unjoin", :id => @join.id}, class: "btn btn-danger") %>
+<% end %>
+
+<% @follow = Follow.where(:user_id => current_user.id ,:event_id => @event.id).first%>
+<% if @follow.blank?%>
+  <%= link_to("Follow", {action: "following", :event_id => @event.id}, class: "btn btn-primary") %>
+  <% else %>
+  <%=link_to("Unfollow", {action: "unfollow", :id => @follow.id}, class: "btn btn-danger") %>
+<% end %>
+
+
+
+</div>
+
+<%= page_heading @event.title %>
+
+<div class="well clearfix">
+  <% if(@event.banner.url != "/images/original/missing.png") %><%= image_tag @event.banner.url(:medium), :class => "pull-left", :style => "margin-right: 20px;" %><% end %>
+  <div class="padding: 10px;"><%= @event.description %></div>
+</div>
+
+<hr />
+
+<p id="notice"><%= notice %></p>
+
+<% if @event.tickets_remaining and @event.tickets_remaining > 0 %>
+
+  <p>
+    <b>Tickets remaining: </b> <%= @event.tickets_remaining %>
+    <b> / </b> <%= @event.max_tickets %>
+  </p>
+
+  <p>
+    <b>Ticket price: $ </b> <%= @event.ticket_price %>
+  </p>
+
+  <%= form_tag reserve_ticket_path do %>
+  <%= text_field_tag :quantity , params[:quantity] %>
+  <%= submit_tag "Reserve" %>
+  <% end %>
+
+<% elsif @event.tickets_remaining == 0 %>
+  <p> TICKETS SOLD OUT! </p>
+
+<% else %>
+  <p> This event does not use a ticketing system </p>
+<% end %>
+
+<hr />
+
+<div class="well"><p><b>Location: </b> <%= @event.location_address %><br />
+<b>From: </b> <%= @event.start_time %><br />
+<b>To: </b> <%= @event.end_time %><br />
+
+<strong>Created by:</strong> <%= link_to @event.society.name, @event.society %><br /></p>
+
+<% if(@event.picture1.url != "/images/original/missing.png") %><%= image_tag @event.picture1.url(:medium) %><% end %> 
+<% if(@event.picture2.url != "/images/original/missing.png") %><%= image_tag @event.picture2.url(:medium) %><% end %> 
+<% if(@event.picture3.url != "/images/original/missing.png") %><%= image_tag @event.picture3.url(:medium) %><% end %>
+</div>
+
+<hr />
+
+<% @event.comments.each do |comment| %>
+  <p>
+    <strong>Commenter:</strong>
+    <%= @user = User.find_by_id(comment.user_id); @user.full_name %>
+  </p>
+
+  <p>
+    <strong>Comment:</strong>
+    <%= comment.body %>
+  </p>
+ 
+<div style="text-align:right">
+	<p>
+    <% if comment.user_id == current_user.id %>
+      <%= link_to 'Delete', [comment.event, comment], class: "btn btn-danger",
+               method: :delete,
+               data: { confirm: 'Are you sure?' } %>
+    <% end %>
+  </p>
+</div>
+
+  
+
+<% end %>
+
+<%= form_for([@event, @event.comments.build]) do |f| %>
+  <p>
+    <%= f.label :body, 'Add a comment' %><br>
+    <%= f.text_area :body %>
+
+  </p>
+  <p>
+    <%= f.submit %>
+  </p>
+  
+<% end %>

@@ -1,0 +1,23 @@
+<%= form_for(@admin) do |f| %>
+  <% if @admin.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@admin.errors.count, "error") %> prohibited this admin from being saved:</h2>
+
+      <ul>
+      <% @admin.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <p> Student Number</p><br>
+    <%= number_field :student_id, :class => 'text_field'%>
+  </div>
+  <%@user = User.where(:student_id => student_id).first%>
+  
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,29 @@
+<h1>Listing adminevents</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Admin</th>
+      <th>Event</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @adminevents.each do |adminevent| %>
+      <tr>
+        <td><%= adminevent.admin_id %></td>
+        <td><%= adminevent.event_id %></td>
+        <td><%= link_to 'Show', adminevent %></td>
+        <td><%= link_to 'Edit', edit_adminevent_path(adminevent) %></td>
+        <td><%= link_to 'Destroy', adminevent, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Adminevent', new_adminevent_path %>

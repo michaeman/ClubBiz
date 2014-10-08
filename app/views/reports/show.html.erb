@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <%@event = Event.find(@report.event_id)%>
+  <h1> Report for <%= @event.title%></h1>
+  <%@ticket= Ticket.where(:event_id => @event.id) %>
+  <%@count = 0 %>
+  <%@followctr = 0 %>
+  <% if @ticket and @event.ticket_price %>
+    <%@ticket.each do |tick|%>
+      <%@buyer = User.where(:id => tick.user_id).first %>
+      <%@count = @count + 1 %>
+      <p>Ticket Number : <%=@count%> <tr> Reserved by : </tr><%=@buyer.user_info%> </p>
+    <%end%>
+    <p> Tickets reserved : <%=@count%> </p>
+    <p> Money made : <tr> $ </tr> <%=@count * @event.ticket_price%></p>
+  <%else%>
+  <p>No Ticketing to report </p>
+  <%end%>
+
+  <%@follow = Follow.where(:event_id =>@event.id)%>
+  <%@follow.each do |foll|%>
+    <%@followctr = @followctr + 1 %>
+  <%end%>
+  <p> Follower Count : <%=@followctr%> </p>
+
+</p>
+  
+<%= link_to 'Back', events_path %>

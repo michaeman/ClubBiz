@@ -1,0 +1,29 @@
+<h1>Listing societynetworks</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Society</th>
+      <th>Network</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @societynetworks.each do |societynetwork| %>
+      <tr>
+        <td><%= societynetwork.society_id %></td>
+        <td><%= societynetwork.network_id %></td>
+        <td><%= link_to 'Show', societynetwork %></td>
+        <td><%= link_to 'Edit', edit_societynetwork_path(societynetwork) %></td>
+        <td><%= link_to 'Destroy', societynetwork, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Societynetwork', new_societynetwork_path %>

@@ -1,0 +1,63 @@
+    
+
+<hr />
+
+<div style="text-align: center;">
+
+<% @events = Event.all; %>
+<% @events.each do |event| %>
+<% if(event.banner.url != "/images/original/missing.png") %><%= link_to (link_to (image_tag event.banner.url(:medium)), event, :html => 'data-gallery'	) %><% end %>
+<% end %>
+
+<% @societies = Society.all; %>
+<% @societies.each do |society| %>
+<% if(society.avatar.url != "/images/original/missing.png") %><%= link_to (link_to (image_tag society.avatar.url(:medium)), society	) %><% end %>
+<% end %>
+
+</div>
+
+<hr />
+
+    <% @annoucements = Annoucement.all %>
+    
+    <% @flag = 0 %>
+    
+    <% @annoucements.each do |annoucement|%>
+    <% @join = Join.where(:user_id => current_user.id ,:event_id => annoucement.event_id)%>
+    <% @follow = Follow.where(:user_id => current_user.id ,:event_id => annoucement.event_id)%>
+    <% @joinsoc = Join.where(:user_id => current_user.id ,:society_id => annoucement.society_id)%>
+    <% @followsoc = Follow.where(:user_id => current_user.id ,:society_id => annoucement.society_id)%>
+    <% @admin = Admin.where(:user_id => current_user.id, :society_id => annoucement.society.id) %>
+    
+    <% @event = Event.where(:id => annoucement.event_id).first%>
+    <% @society = Society.where(:id => annoucement.society_id).first%>
+
+            <% if @join.blank? && @follow.blank? && @joinsoc.blank? && @followsoc.blank? %>
+            <%else%>
+            <% if @flag == 0%>
+            <h1>Announcements </h1>
+             <table class="table" id="events">
+                <thead>
+                <tr>
+                <th>Event</th>
+                <th>Announcement</th>
+                <th>Created by</th>
+                </tr>
+                 </thead>
+                <tbody>
+            <% @flag = @flag + 1%>
+            <%end%>
+            
+                    <tr>
+                        <td> <strong><%= link_to @event.title, @event %></strong></td>
+                        <td> <%=annoucement.contents%></td>
+                        <td> <strong><%= link_to @society.name, @society %></strong></td>
+                        <% if !@admin.blank? %>
+                        <td><%= link_to 'Destroy', annoucement, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+                        <% end %>
+                    </tr>
+           
+            <%end%>
+               <%end%>
+                        </tbody>
+             </table>

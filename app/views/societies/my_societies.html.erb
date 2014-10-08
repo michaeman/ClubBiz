@@ -1,0 +1,38 @@
+
+<h1></h1>
+
+<td><%= link_to 'My Societies', my_societies_path, class: "btn btn-primary" %></td>
+
+<td><%= link_to 'All Societies', societies_path, class: "btn btn-primary" %></td>
+
+<div style="text-align:right">
+  <td><%= link_to 'Register a Society',new_society_path,class: "btn btn-success" %></td>
+</div> 
+
+<h1>Listing your societies</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th> | </th>
+      <th> | </th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @societies.each do |society| %>
+      <tr>
+        <td><%= society.name %></td>
+        <td> | </td>
+        <td> | </td>
+        <td><%= society.description %></td>
+        <% if user_signed_in? %>
+        	<td><%= link_to 'Show', society, class: "btn btn-primary" %></td>
+	        <td><%= link_to 'Edit', edit_society_path(society), class: "btn btn-primary" %></td>
+	        <td><%= link_to 'Delete', society, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger"%></td>
+	     <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

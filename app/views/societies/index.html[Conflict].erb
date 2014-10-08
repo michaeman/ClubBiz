@@ -1,0 +1,55 @@
+<%= page_heading "All Societies" %>
+
+<div class="panel panel-default">
+	<div class="panel-body">
+		<p>Welcome to the All Societies page! This page lists all societies 
+		that have been listed in Club-Biz. Simply select an society below to 
+		view its associated details and actions. You can also use the search 
+		box below to filter through the societies.</p>
+		<input type="text" class="form-control" id="search" placeholder="Type to search/filter">
+	</div>
+
+	<table class="table" id="societies">
+		<thead>
+			<tr>
+				<th style="min-width: 100px; width: 100px;"></th>
+				<th style="width: 1px;">Title</th>
+				<th>Description</th>
+				<th style="width: 1px;">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @societies.each do |society| %>
+				<tr>
+					<td><% if(society.avatar.url != "/images/original/missing.png") %><%= link_to (link_to (image_tag society.avatar.url(:thumb)), society) %><% else %><div style="width: 100px;">&nbsp;</div><% end %></td>
+					<td><span style="white-space: nowrap;"><strong><%= link_to (link_to (society.name), society) %></strong></span></td>
+					<td><%= society.description %></td>
+					<td><span style="white-space: nowrap;">
+						<% if society.user_id == current_user.id %>
+							<%= link_to 'Edit', edit_society_path(society), class: "btn btn-primary" %> 
+							<%= link_to 'Delete', society, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+						<% else %>
+							<%= link_to 'Join', society, class: "btn btn-success" %> 
+							<%= link_to "Follow", society, { :controller => "society", :action => "join"} %> 
+							<!-- <%= link_to 'Follow', society, class: "btn btn-primary" %>--> 
+						<% end %>
+					</span></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var $rows = $('#societies tbody tr');
+    $('#search').keyup(function() {
+        var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        $rows.show().filter(function() {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(val);
+        }).hide();
+    });
+});
+</script>

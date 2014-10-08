@@ -1,0 +1,70 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @network.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @network.description %>
+</p>
+<table class="table" id="events">
+
+                <thead> 
+                <tr>
+                  <p>Member Societies</p>
+                <th>Member Name</th>
+                </tr>
+                 </thead>
+                <tbody>
+                    <tr>
+                    	<%@socnet = Societynetwork.where(:network_id => @network.id)%>
+                        <%@socnet.each do |soc|%>
+                        <%if !soc.blank?%>
+                        <%@society = Society.where(:id => soc.society_id).first%>
+                        <td> <%=link_to @society.name, @society%> <td>
+                          <% @netsoc = Societynetwork.where(:network_id => soc.id ,:society_id => soc.society_id).first%>
+                          <% @admin = Admin.where(:user_id => current_user.id, :society_id => @society.id).first%>
+                          <%if !@admin.blank?%>
+                          <% if !@netsoc.blank?%>
+                            <%=link_to("Join", {action: "join_net", :network_id => soc.id, :society_id =>soc.society_id}, class: "btn btn-primary") %>
+                          <% else %>
+                            <%=link_to("Leave", {action: "unjoin_net", :id => soc.id}, class: "btn btn-danger") %>
+                          <% end %>
+                          <%end%>
+                      </tr>
+                      <% end %>
+                      <%end%>
+               </tbody>
+             </table>
+<table class="table" id="events">
+
+                <thead> 
+                <tr>
+                  <p>Member Events</p>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Created By </th>
+                </tr>
+                 </thead>
+                <tbody>
+                    <tr>
+                        <%@socnet = Societynetwork.all%>
+                        <%@socnet.each do |soc|%>
+                        <%if !soc.blank?%>
+                        <%@society = Society.where(:id => soc.society_id).first%>
+                        <%@event =Event.where(:society_id =>@society.id)%>
+                        <%@event.each do |even|%>
+                <td><strong><%= link_to even.title, even %></strong></td>
+          <td><%= even.description %></td>
+          <td><%= link_to @society.name, @society %></td>
+                                  </tr>
+                      <% end %>
+                      <%end%>
+                      <%end%>
+               </tbody>
+             </table>
+             
+<%= link_to 'Edit', edit_network_path(@network), class: "btn btn-primary" %>
+

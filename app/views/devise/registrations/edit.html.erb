@@ -1,0 +1,18 @@
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), :html => { method: :put, :class => "form-signin", :role => "form" }) do |f| %>
+	<%= page_heading "Edit User" %>
+	<%= devise_error_messages! %>
+	<%= f.text_field :first_name, autofocus: true, :class => "form-control", :placeholder => "First name" %>
+	<%= f.text_field :last_name, :class => "form-control", :placeholder => "Last name"%>
+	<%= f.email_field :email, :class => "form-control", :placeholder => "Email address", :style => "margin-bottom: 10px;"  %>
+	<%= f.text_field :phone_number, :class => "form-control", :placeholder => "Contact number" %>
+	
+	<em><span style="color: red;">(leave blank if you don't want to change it)</span></em>
+	<%= f.password_field :password, autocomplete: "off", :class => "form-control", :placeholder => "New password", :style => "margin-bottom: 0;" %>
+	<%= f.password_field :password_confirmation, autocomplete: "off", :class => "form-control", :placeholder => "New password confirmation" %>
+	<em><span style="color: red;">(we need your current password to confirm your changes or cancelling your account)</span></em>
+	<%= f.password_field :current_password, autocomplete: "off", :class => "form-control", :placeholder => "Current password" %>
+
+	<%= f.submit "Update", :class => "btn btn-lg btn-primary btn-block" %>
+
+	
+<% end %>

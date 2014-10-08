@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Message:</strong>
+  <%= @annoucement.contents %>
+</p>
+
+<p>
+  <strong>Society:</strong>
+  <%= @annoucement.society.name %>
+</p>
+
+<p>
+  <strong>Event:</strong>
+  <%= @annoucement.event.title %>
+</p>
+
+<%= link_to 'Back', :back %> |
+<%= link_to 'Make another announcement', :back %>

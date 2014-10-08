@@ -1,0 +1,31 @@
+<%= form_for(@invitation, :html => {:class => "form-signin", :role => "form"}) do |f| %>
+  <% if @invitation.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@invitation.errors.count, "error") %> prohibited this invitation from being saved:</h2>
+
+      <ul>
+      <% @invitation.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+ <div class="form-group">
+    <%= f.label :society %><br>
+    <select class="form-control" name="invitation[society_id]">
+      <%@sid = params[:sid]%>
+      <%@soc = Society.where.not('id' => @sid)%>
+      <%@soc.each do |society| %>
+
+        <option value = "<%=society.id%>"><%=society.name%></option>
+      <%end%>
+    </select>
+  </div>
+
+<%@eid = params[:evid]%>
+<%@event = Event.find(@eid)%>
+<%=f.hidden_field :event_id, :value => @event.id %>
+
+    <%= f.submit :class => "btn btn-lg btn-primary btn-block" %>
+<% end %>

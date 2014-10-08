@@ -1,0 +1,222 @@
+<p id="notice"><%= notice %></p>
+<div class="pull-right">
+  <% @join = Join.where(:user_id => current_user.id ,:society_id => @society.id).first%>
+  <% if @join.blank?%>
+  <%=link_to("Join", {action: "joining", :society_id => @society.id}, class: "btn btn-primary") %>
+  <% else %>
+  <%=link_to("Resign", {action: "unjoin", :id => @join.id}, class: "btn btn-danger") %>
+  <% end %>
+  <% @follow = Follow.where(:user_id => current_user.id ,:society_id => @society.id).first %>
+  <% if @follow.blank?%>
+  <%= link_to("Follow", {action: "following", :society_id => @society.id}, :class => "btn btn-primary") %>
+  <% else %>
+  <%= link_to("Unfollow", {action: "unfollow", :id => @follow.id}, :class => "btn btn-danger") %>
+  <% end %>
+  <% @admin = Admin.where(:user_id => current_user.id, :society_id => @society.id)%>
+  <% if @society.user_id == current_user.id || !@admin.blank?%>
+  <%= link_to 'Edit', edit_society_path(@society), class: "btn btn-default" %>
+  <%= link_to 'Create Network', new_network_path, class: "btn btn-default" %>
+  <%end%>
+</div>
+<%= page_heading @society.name %>
+<div class="well clearfix">
+  <% if(@society.avatar.url != "/images/original/missing.png") %><%= image_tag @society.avatar.url(:medium), :class => "pull-left", :style => "margin-right: 20px;" %><% end %>
+  <div class="padding: 10px;"><%= @society.description %></div>
+</div>
+<hr />
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>
+    Admins</h4>
+  </div>
+  <table class="table" id="admins">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <% @admin = Admin.all %>
+        <% @admin.each do |admin|%>
+        <% @user = User.where(:id => admin.user_id).first%>
+        <% if admin.society_id == @society.id %>
+        <td><%=@user.full_name%> </td>
+        <td> <%=@user.email%></td>
+        <td> <%=@user.phone_number %></td>
+      </tr>
+      <% end %>
+      <% end %>
+    </tbody>
+  </table>
+  <%@admincheck = Admin.where(:user_id => current_user.id, :society_id => @society.id).first%>
+        <% if !@admincheck.blank? %>
+  <div class="panel-footer">
+    <%= form_tag make_admin_path do %>
+    <p>Student Id </p>
+    <%= number_field_tag :sid , params[:sid] %>
+    <p>Society Validation Code </p>
+    <%= number_field_tag :valc , params[:valc] %>
+    <%= submit_tag "Make Admin" %>
+  </div>
+    <% end %>
+<%end%>
+</div>
+<hr />
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>
+    Events</h4>
+  </div>
+<table class="table" id="events">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Tickets </th>
+      <th>Price </th>
+      <th>Location </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <%@event = Event.where(:society_id => @society.id)%>
+      <%@event.each do |event|%>
+      <td> <strong><%= link_to event.title, event %></strong></td>
+      <td> <%=event.start_time %></td>
+      <td> <%=event.end_time %></td>
+      <% if event.tickets_remaining and event.tickets_remaining > 0 %>
+      <td> <%=event.tickets_remaining%>/<%=event.max_tickets%></td>
+      <% elsif event.tickets_remaining == 0 %>
+      <td> TICKETS SOLD OUT! </td>
+      <% else %>
+      <td> N/A </td>
+      <% end %>
+      <td> <% if(event.ticket_price) %>$<% end %><%=event.ticket_price%> 
+      <td>
+      <td> <%=event.location_address%>
+      <td>
+        <% @admin = Admin.where(:user_id => current_user.id, :society_id => @society.id)%>
+        <% if @society.user_id == current_user.id || !@admin.blank?%>
+        <%= link_to 'Share', new_invitation_path(:sid => @society.id, :evid => event.id), class: "btn btn-default" %>
+        <%end%>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+
+
+<%@socevent = Societyevent.where(:society_id => @society.id).first%>
+<%if !@socevent.blank? %>
+<hr />
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>
+    Shared Events</h4>
+  </div>
+<table class="table" id="sharedevent">
+  <thead>
+    <tr>
+		<th>Name</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Tickets </th>
+      <th>Price </th>
+      <th>Location </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <%@socev = Societyevent.where(:society_id => @society.id)%>
+      <%@socev.each do | societyevent |%>
+      <%@share = Event.where(:id => societyevent.event_id).first%>
+      <td> <strong><%= link_to @share.title, @share %></strong></td>
+      <td> <%=@share.start_time %></td>
+      <td> <%=@share.end_time %></td>
+      <% if @share.tickets_remaining and @share.tickets_remaining > 0 %>
+      <td> <%=@share.tickets_remaining%>/<%=@share.max_tickets%></td>
+      <% elsif @share.tickets_remaining == 0 %>
+      <td> TICKETS SOLD OUT! </td>
+      <% else %>
+      <td> N/A </td>
+      <% end %>
+      <td> <%=@share.ticket_price%> </td>
+      <td><%=@share.location_address%></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>
+<%end%>
+
+<% @admin = Admin.where(:user_id => current_user.id, :society_id => @society.id)%>
+<% if !@admin.blank?%>
+<hr />
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>
+    Networks</h4>
+  </div>
+<table class="table" id="networks">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <%@network = Network.all%>
+      <%@network.each do |net|%>
+      <%@socnet = Societynetwork.where(:society_id => @society.id, :network_id => net.id).first%>
+      <td> <%=link_to net.name, net%> </td>
+      <td> <%=net.description%></td>
+      <% @admin = Admin.where(:user_id => current_user.id, :society_id => @society.id)%>
+      <% if !@admin.blank?%>
+      <td>
+        <% if @socnet.blank?%>
+        <%=link_to("Join", {action: "join_net", :network_id => net.id, :society_id =>@society.id}, class: "btn btn-primary") %>
+        <% else %>
+        <%=link_to("Leave", {action: "unjoin_net", :id => @socnet.id}, class: "btn btn-danger") %>
+        <% end %>
+      </td>
+      <%end%>
+    </tr>
+    
+    <%end%>
+  </tbody>
+</table>
+</div>
+<% @admin = Admin.where(:user_id => current_user.id, :society_id => @society.id)%>
+<% if !@admin.blank?%>
+<%@invitation = Invitation.where(:society_id => @society.id).first%>
+<%if !@invitation.blank?%>
+<table class="table" id="invitations">
+  <thead>
+    <tr>
+      <p>Invitations</p>
+      <th>Event Name</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <%@invitation = Invitation.where(:society_id => @society.id)%>
+      <%@invitation.each do |invo|%>
+      <%@invoev = Event.find(invo.event_id) %>
+      <td><%=@invoev.title%></td>
+      <td>
+        <%=link_to("Accept", {action: "accept_share", :society_id => @society.id, :event_id =>invo.event_id}, class: "btn btn-primary") %>
+      </td>
+    </tr>
+    <%end%>
+  </tbody>
+</table>
+<%end%>
+<%end%>
+<%end%>

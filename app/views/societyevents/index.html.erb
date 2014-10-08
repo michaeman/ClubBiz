@@ -1,0 +1,29 @@
+<h1>Listing societyevents</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Society</th>
+      <th>Event</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @societyevents.each do |societyevent| %>
+      <tr>
+        <td><%= societyevent.society_id %></td>
+        <td><%= societyevent.event_id %></td>
+        <td><%= link_to 'Show', societyevent %></td>
+        <td><%= link_to 'Edit', edit_societyevent_path(societyevent) %></td>
+        <td><%= link_to 'Destroy', societyevent, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Societyevent', new_societyevent_path %>
